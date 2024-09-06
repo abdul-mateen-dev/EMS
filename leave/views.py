@@ -6,27 +6,11 @@ from rest_framework import status
 
 from account.permission import IsAdmin, IsEmployee
 
-from .serializer import LimitationsSerializer, LeaveCategorySerializer, LeaveSerializer
-from .models import Limitations, LeaveCategory, Leave
+from .serializer import  LeaveCategorySerializer, LeaveSerializer
+from .models import LeaveCategory, Leave
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-
-class SetLimit(ModelViewSet):
-    queryset = Limitations.objects.all()
-    serializer_class = LimitationsSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdmin]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def list(self, request, *args, **kwargs):
-        serializer = self.get_serializer(Limitations.objects.all())
-        return Response(serializer.data)
 
 
 class LeaveCategoryView(ModelViewSet):
@@ -35,15 +19,8 @@ class LeaveCategoryView(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdmin]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def list(self, request, *args, **kwargs):
-        serializer = self.get_serializer(Limitations.objects.all())
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+       serializer.save()
 
 
 class LeaveViewSet(ModelViewSet):
